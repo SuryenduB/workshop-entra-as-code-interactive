@@ -1,0 +1,44 @@
+@startuml
+
+actor "External Workload\n(e.g. Kubernetes Pod)" as workload
+participant "External Identity Provider\n(e.g. Kubernetes)" as idp
+participant "Graph API" as api
+participant "Entra ID" as entra
+
+note over workload, entra
+  Workload Federation Configuration:
+  - Service Principal with federated credential
+  - Issuer URL (e.g., Kubernetes API server)
+  - Subject identifier (e.g., service account name)
+  - No client secret required
+end note
+
+== Initial Setup (via Terraform) ==
+
+note over entra
+  Service Principal created with:
+  - Federated credential trust
+  - Required permissions/roles
+end note
+
+== Token Exchange Flow ==
+
+workload -> idp: Request service account token
+idp -> workload: Return JWT token\n(with subject claim)
+workload -> entra: Request Entra ID token\n(present external JWT)
+entra -> entra: Validate JWT signature\nand subject/issuer claims
+entra -> workload: Issue Entra ID Service Principal access token
+
+== Resource Access (Graph API or API protected with Entra ID) ==
+
+workload -> api: Access Azure resource\n(using Azure access token)
+api -> entra: Validate Azure token
+entra -> api: Confirm token validity
+api -> workload: Allow access to requested resource
+
+note right of workload
+  No secrets stored in the workload
+  Trust based on external identity provider
+end note
+
+@enduml

@@ -1,0 +1,14 @@
+@clientSecret = YOUR_CLIENT_SECRET_HERE
+@tenant = YOUR_TENANT_ID_HERE
+@clientId = YOUR_CLIENT_ID_HERE
+
+### technical detials: https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-client-creds-grant-flow#get-a-token
+### get token
+POST https://login.microsoftonline.com/{{tenant}}/oauth2/v2.0/token
+Content-Type: application/x-www-form-urlencoded
+ 
+grant_type=client_credentials&
+scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&
+client_id={{clientId}}&
+client_secret={{clientSecret}}&
+redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug

@@ -1,0 +1,51 @@
+@startuml
+
+actor "User" as user
+participant "Azure Portal\nor My Access" as portal
+participant "PIM Service" as pim
+participant "Entra ID" as entra
+participant "Group" as group
+
+
+== PIM Eligibility Assignment (via Terraform) ==
+
+note over entra, group
+  User is made "eligible" for group membership
+  but is not an active member yet
+end note
+
+== PIM Access Activation Flow ==
+
+user -> portal: Access Azure Portal PIM or MyAccess
+user -> portal: View eligible assignments (groups)
+user -> portal: Request activation for "Application Administrators"
+user -> portal: Provide justification
+portal -> pim: Submit activation request
+
+alt Self-service Activation
+    pim -> entra: Process activation
+    entra -> group: Add user as active member temporarily
+    pim -> portal: Notify activation
+    portal -> user: Access activated notification
+end
+
+== Active Access Usage ==
+
+user -> group: Temporarily inherits all group permissions
+note right of user
+  User has time-limited permissions
+  granted to "Workshop Developer" group
+  (typically 8 hours)
+end note
+
+== Access Expiration ==
+
+pim -> entra: Time expires
+entra -> group: Remove active membership
+group -> user: Permissions revoked
+note right of user
+  User returns to "eligible" state
+  and must re-activate when needed
+end note
+
+@enduml

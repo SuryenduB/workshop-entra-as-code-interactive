@@ -1,0 +1,40 @@
+@startuml
+
+actor "User" as user
+participant "My Access Portal" as portal
+participant "Access Package" as package
+participant "Entra ID" as entra
+participant "Group" as group
+
+note over user, package
+  Access Package Configuration:
+  - Package name and description
+  - Associated group(s)
+  - Approval workflow (if any)
+  - Access duration
+end note
+
+== Access Package Request Flow ==
+
+user -> portal: Access myaccess.microsoft.com
+user -> portal: Browse available packages
+user -> portal: Request "Workshop Developer" package
+portal -> package: Submit request
+
+alt Automatic Approval
+    package -> entra: Process request
+    entra -> group: Add user to "Workshop Developer" group
+    package -> portal: Notify approval
+    portal -> user: Access granted notification
+
+end
+
+== Access Usage ==
+
+user -> group: Inherits all group permissions
+note right of user
+  User now has all permissions 
+  granted to "Workshop Developer" group
+end note
+
+@enduml

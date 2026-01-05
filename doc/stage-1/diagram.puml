@@ -1,0 +1,29 @@
+@startuml
+
+actor "User" as user
+participant "OIDC Debugger" as app
+participant "test sso.http" as sso
+participant "Entra ID" as entra
+
+note over app, entra
+  Configuration Requirements:
+  - Client ID
+  - Client Secret (for confidential clients)
+  - Redirect URI
+end note
+
+== Authentication Flow ==
+
+user -> app: Access application
+app -> entra: Redirect to authentication
+user -> entra: Authenticate with credentials
+entra -> app: Return code to the 'debugger' (in the browser)
+note right of entra
+Authorization Code Flow
+end note
+sso -> entra: Exchange code to token (via sso.http test file)
+
+app -> user: WebSite content (real case)
+
+
+@enduml

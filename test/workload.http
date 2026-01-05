@@ -1,0 +1,48 @@
+@host = https://vc.factorlabs.pl
+
+### configuration
+GET {{host}}/.well-known/openid-configuration
+
+### keys
+GET {{host}}/.well-known/keys
+
+### Source (partner) token
+POST {{host}}/api/workload/token
+
+
+{
+  "id": "03de712e-67fc-4d48-8dce-14466f8e219f",
+  "aud": "api://AzureADTokenExchange",
+  "sub": "system:serviceaccount:default:play-with-workload-identity",
+  "subject": "system:serviceaccount:default:play-with-workload-identity"
+}
+
+### Replace these values with your actual tenant ID, client ID, and subject token
+@tenantId = YOUR_TENANT_ID_HERE
+@clientId = YOUR_CLIENT_ID_HERE
+@subjectToken = YOUR_SUBJECT_TOKEN_HERE
+
+### Token exchange endpoint
+POST https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{clientId}}&
+client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&
+client_assertion={{subjectToken}}&
+grant_type=client_credentials&
+scope=https://graph.microsoft.com/.default
+
+### Example Response:
+# {
+#   "token_type": "Bearer",
+#   "expires_in": 3599,
+#   "ext_expires_in": 3599,
+#   "access_token": "eyJ0eXAiOiJKV..."
+# }
+
+
+
+@access_token = 
+### Using the token to call Microsoft Graph API
+GET https://graph.microsoft.com/v1.0/applications
+Authorization: Bearer {{access_token}}
