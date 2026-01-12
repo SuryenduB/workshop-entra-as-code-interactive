@@ -1,5 +1,5 @@
 # Entra as a Code Workshop
-Manage your Tenant with Infrastructure as Code: it works for Workforce and Customer instances
+Manage your Tenant with Infrastructure as Code: it works for Workforce and Customer instances: Suryendub Instance
 
 ## Interactive Workshop Mode (via GitHub Temaplate)
 
